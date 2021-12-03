@@ -1,0 +1,27 @@
+body
+{
+    background-image: url(https://s4.uupload.ir/files/guessing_tb1y.jpg);
+    background-size: cover;
+    background-position: top;
+    margin-right: 610px;
+}
+.Column
+{
+    display: inline-grid;
+    margin-top: 133px;
+    padding: 15px;
+    text-align: center;
+    width: 342px;
+    background-color: aliceblue;
+    opacity: 0.85;
+}
+.container {
+    position: relative;
+    text-align: center;
+    top: 30px;
+}
+.saved_answer{
+    border: 4px dotted blue;
+    margin-top : 50px;
+    padding-bottom: 13px;
+}

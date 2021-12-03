@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<head>
+    <title>no</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<script>
+    function myFunctionName() {
+        if (document.myForm.myText.value.length > 255 ){
+            alert("too many characters");
+            return false;}
+        else{
+            if (/^[a-zA-Z0-9_ ]*$/.test(document.myForm.myText.value) == false){
+                alert("used unallowed letters");
+                return false;
+            }
+            else{
+            sendDataToServer1();
+            return false;}
+        }
+
+    }
+</script>
+
+
+<script>
+    let users = localStorage.getItem("name");
+    alert(users);
+    function sendDataToServer1() {
+        url1 = "https://api.genderize.io/?name=";
+        url2 = document.getElementById('the_name').value;
+        url = url1.concat(url2);
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", url, false );
+        xmlHttp.send( null );
+        const obj =  JSON.parse(xmlHttp.responseText);
+        document.getElementsByName("predictions")[0].innerHTML=obj.gender;
+        document.getElementsByName("predictions")[1].innerHTML=obj.probability;
+        if(users != null){
+        let position = users.search(document.getElementById('the_name').value);
+        let position_start = position + document.getElementById('the_name').value.length + 1;
+        if(users.substring(position_start, position_start+6) == "female")
+            document.getElementsByName("storage")[0].innerHTML= "female";
+        if(users.substring(position_start, position_start+4) == "male")
+            document.getElementsByName("storage")[0].innerHTML= "male";
+        if(position == -1)
+            document.getElementsByName("storage")[0].innerHTML= "there is nothing in storage to help";}
+
+    }
+    function saveName() {
+        let new_val = "";
+        if(users == null){
+            if(document.getElementById('gender_Male').checked)
+                new_val = [document.getElementById('the_name').value,"male"];
+
+            else if(document.getElementById('gender_Female').checked)
+                new_val = [document.getElementById('the_name').value,"female"];
+            else
+                new_val = [document.getElementById('the_name').value,document.getElementsByName("predictions")[0].innerHTML];
+        }
+          else{
+            let position = users.search(document.getElementById('the_name').value);
+              if(position != -1) {
+
+              let position_start = users.search(document.getElementById('the_name').value);
+              let position_end;
+              let gender_define = position_start + document.getElementById('the_name').value.length + 1;
+              if (users.substring(gender_define, gender_define + 6) == "female")
+                  position_end = position_start + document.getElementById('the_name').value.length + 7;
+              if (users.substring(gender_define, gender_define + 4) == "male")
+                  position_end = position_start + document.getElementById('the_name').value.length + 5;
+              if (position_start == 0)
+                  users = users.replace(users.substring(position_start, position_end + 1), "");
+               else {
+                  users = users.replace(users.substring(position_start - 1, position_end), "");
+              }
+            if(document.getElementById('gender_Male').checked)
+                new_val = [document.getElementById('the_name').value,"male"];
+
+              if(document.getElementById('gender_Female').checked)
+                  new_val = [document.getElementById('the_name').value,"female"];
+          }
+        else{
+        if(document.getElementById('gender_Male').checked)
+          new_val = [document.getElementById('the_name').value,"male"];
+        else if(document.getElementById('gender_Female').checked)
+          new_val = [document.getElementById('the_name').value,"female"];
+        else
+            new_val = [document.getElementById('the_name').value,document.getElementsByName("predictions")[0].innerHTML];
+        }}
+
+        if (typeof(Storage) !== "undefined") {
+            // Store
+            if(users == null){
+                localStorage.setItem("name", [new_val]); }
+            else{
+            localStorage.setItem("name", [users,new_val]);}
+            // Retrieve
+           localStorage.getItem("name");
+        } else {
+            alert("Sorry, your browser does not support Web Storage...");
+        }
+        location.reload();
+    }
+    function clearName(){
+        if(document.getElementsByName("storage")[0].innerHTML == "male"){
+            let position_start = users.search(document.getElementById('the_name').value);
+            let position_end = position_start + document.getElementById('the_name').value.length + 5;
+            if(position_start == 0){
+                users = users.replace(users.substring(position_start, position_end + 1), "");
+            }
+            else
+            users = users.replace(users.substring(position_start-1, position_end), "");
+        }
+        if(document.getElementsByName("storage")[0].innerHTML == "female"){
+            let position_start = users.search(document.getElementById('the_name').value);
+            let position_end = position_start + document.getElementById('the_name').value.length + 7;
+            if(position_start == 0){
+                users = users.replace(users.substring(position_start, position_end + 1), "");
+            }
+            else
+                users = users.replace(users.substring(position_start-1, position_end), "");
+        }
+        localStorage.setItem("name", [users]);
+        location.reload();
+    }
+
+</script>
+
+<div class="container">
+    <div class="Column">
+        <h2>Mr. or Ms.?</h2>
+        <form name="myForm" onSubmit="return myFunctionName()">
+            <label>Name </label>
+            <input type="text" id='the_name' name="myText"><br><br>
+            <label for="gender_Male">Male</label>
+            <input type="radio" id="gender_Male" name="gender" value="M"/>
+            <label for="gender_Female">Female</label>
+            <input type="radio" id="gender_Female" name="gender" value="F"/><br><br>
+            <input type="submit" value="submit"><br><br>
+        </form>
+        <input type="submit" value="save" onclick="saveName()">
+    </div>
+    <div class="Column">
+        <h2>Predication</h2>
+        <div class="prediction_box">
+            <output name="predictions" >gender </output><br>
+            <output name="predictions">probability</output>
+        </div>
+        <div class="saved_answer">
+            <h2>Saved Answer</h2><br>
+            <output name="storage">storage is ready</output><br><br>
+            <input type="submit" onclick="clearName()" value="clear"/>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
