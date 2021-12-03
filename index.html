@@ -7,15 +7,19 @@
 
 <body>
 <script>
+    /* this function is where we manually set what happens when user clicks the submit button. */
     function myFunctionName() {
+        /* check if there is more than 255 characters */
         if (document.myForm.myText.value.length > 255 ){
             alert("too many characters");
             return false;}
         else{
+            /* using regular expression to see if it contains unallowed characters */
             if (/^[a-zA-Z0-9_ ]*$/.test(document.myForm.myText.value) == false){
                 alert("used unallowed letters");
                 return false;
             }
+            /* if it passed all the filters now we call the function that sends data to the mentioned website */
             else{
             sendDataToServer1();
             return false;}
@@ -26,9 +30,12 @@
 
 
 <script>
+    /* i used local storage. when a user opens my website the first thing it does is get the "users" and prints it for debugging and more clearity reasons */ 
     let users = localStorage.getItem("name");
     alert(users);
     function sendDataToServer1() {
+        /* all we do here is basically a simple get request and then we parse the JSON message to a js object. we use the gender and probablity 
+        it gives us to fill the prediction division in the site */
         url1 = "https://api.genderize.io/?name=";
         url2 = document.getElementById('the_name').value;
         url = url1.concat(url2);
@@ -38,6 +45,8 @@
         const obj =  JSON.parse(xmlHttp.responseText);
         document.getElementsByName("predictions")[0].innerHTML=obj.gender;
         document.getElementsByName("predictions")[1].innerHTML=obj.probability;
+        /* here we try to see if the name he searched for was already in our local storage, 
+        we search the "users" and return a male or a female or nothing to the storage division */
         if(users != null){
         let position = users.search(document.getElementById('the_name').value);
         let position_start = position + document.getElementById('the_name').value.length + 1;
@@ -50,6 +59,11 @@
 
     }
     function saveName() {
+        /* this is the most complicated part of my js code and its becuase i couldnt search the users if it was empty.
+        the whole function of saveName() is to add new_val to the already exisitng users (aka our storage) 
+        first it checks if users is null, if so it gets the gender from input radios and if none were selected it goes for the prediction. 
+        then if users wasnt null, it checks if there was an already existing name in the users and it deletes to prevent us from duplicates
+        at last if the users wasnt null and there wasnt any duplicates it acts like the first step, prioritising the input radios*/
         let new_val = "";
         if(users == null){
             if(document.getElementById('gender_Male').checked)
@@ -90,7 +104,7 @@
         else
             new_val = [document.getElementById('the_name').value,document.getElementsByName("predictions")[0].innerHTML];
         }}
-
+        /* after all this block of code its finally time to store them in the local storage. */
         if (typeof(Storage) !== "undefined") {
             // Store
             if(users == null){
@@ -105,6 +119,7 @@
         location.reload();
     }
     function clearName(){
+        /* the clear name function searches the "users" according to the gender the saved message gave us and replaces that part of the string with null */
         if(document.getElementsByName("storage")[0].innerHTML == "male"){
             let position_start = users.search(document.getElementById('the_name').value);
             let position_end = position_start + document.getElementById('the_name').value.length + 5;
