@@ -1,3 +1,4 @@
+/* here i set a background image which i uploaded to uupload before and i make sure to cover all the page */
 body
 {
     background-image: url(https://s4.uupload.ir/files/guessing_tb1y.jpg);
@@ -5,6 +6,8 @@ body
     background-position: top;
     margin-right: 610px;
 }
+/* i devided the whole content to 2 columns. so these are basically the 2 columns of user inputs on the  left and outputs on the right.
+i used inline- grid to display them next to eachother */
 .Column
 {
     display: inline-grid;
@@ -15,11 +18,14 @@ body
     background-color: aliceblue;
     opacity: 0.85;
 }
+/* this class is to position the main content of the page */
 .container {
     position: relative;
     text-align: center;
     top: 30px;
 }
+/* based on the pdf we needed to have saved answer surrounded by little dots so i used border dotted to make it happen and a little bit margin from the top 
+for more clarity */
 .saved_answer{
     border: 4px dotted blue;
     margin-top : 50px;
